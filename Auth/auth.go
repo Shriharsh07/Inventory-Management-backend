@@ -29,21 +29,24 @@ type Credentials struct {
 func Signup(w http.ResponseWriter, r *http.Request) {
 	var user User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Invalid request"})
 		return
 	}
 
 	// Check if user already exists
 	var existing User
 	if err := config.DB.Where("email = ?", user.Email).First(&existing).Error; err == nil {
-		http.Error(w, "User already exists", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"message": "User already exists"})
 		return
 	}
 
 	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Something went wrong, Please try again later"})
 		return
 	}
 
@@ -66,19 +69,22 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func Login(w http.ResponseWriter, r *http.Request) {
 	var creds Credentials
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Invalid request"})
 		return
 	}
 
 	var user User
 	if err := config.DB.Where("email = ?", creds.Email).First(&user).Error; err != nil {
-		http.Error(w, "Incorrect email or password", http.StatusUnauthorized)
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Incorrect email or password"})
 		return
 	}
 
 	// Compare hashed password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
-		http.Error(w, "Incorrect email or password", http.StatusUnauthorized)
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Incorrect email or password"})
 		return
 	}
 
@@ -89,7 +95,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		http.Error(w, "Could not create token", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Something went wrong, Please try again later"})
 		return
 	}
 

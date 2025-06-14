@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Shriharsh07/InventoryManagement/config"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 var jwtKey = []byte("pXIl2AQ7AOyXgqwPF69uDXdjEBeMVv826QNQ0OjNNIs=")
@@ -26,9 +26,6 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-// DB instance (should be set from main.go)
-var DB *gorm.DB
-
 func Signup(w http.ResponseWriter, r *http.Request) {
 	var user User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
@@ -38,7 +35,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	// Check if user already exists
 	var existing User
-	if err := DB.Where("email = ?", user.Email).First(&existing).Error; err == nil {
+	if err := config.DB.Where("email = ?", user.Email).First(&existing).Error; err == nil {
 		http.Error(w, "User already exists", http.StatusBadRequest)
 		return
 	}
@@ -57,7 +54,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		Password: string(hashedPassword),
 	}
 
-	if err := DB.Create(&user).Error; err != nil {
+	if err := config.DB.Create(&user).Error; err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
 	}
@@ -74,7 +71,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user User
-	if err := DB.Where("email = ?", creds.Email).First(&user).Error; err != nil {
+	if err := config.DB.Where("email = ?", creds.Email).First(&user).Error; err != nil {
 		http.Error(w, "Incorrect email or password", http.StatusUnauthorized)
 		return
 	}

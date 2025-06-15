@@ -7,15 +7,15 @@ import (
 )
 
 type Inventory struct {
-	SerialNumber          int       `json:"serialNumber"`
+	SerialNumber          string    `json:"serialNumber"`
 	PurchaseDate          time.Time `json:"purchaseDate"`
 	DeliveryDate          time.Time `json:"deliveryDate" gorm:"default:NULL"`
 	EndOfWarranty         time.Time `json:"endOfWarranty" gorm:"default:NULL"`
 	LastPhysicalInventory time.Time `json:"lastPhysicalInventory" gorm:"default:NULL"`
-	OrderNumber           int       `json:"orderNumber"`
-	ManufacturerID        int       `json:"manufacturerID"`
+	OrderNumber           string    `json:"orderNumber"`
+	ManufacturerID        string    `json:"manufacturerID"`
 	Model                 string    `json:"model"`
-	StatusID              int       `json:"statusID"`
+	Status                string    `json:"status"`
 	DeviceType            string    `json:"deviceType"`
 	Location              string    `json:"location"`
 	Description           string    `json:"description"`

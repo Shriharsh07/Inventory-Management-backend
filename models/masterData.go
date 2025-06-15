@@ -1,7 +1,5 @@
 package models
 
-import "gorm.io/gorm"
-
 // MasterData represents the structure of the master data.
 type MasterData struct { // Correct: Uppercase M for export
 	Countries        []DataItem `json:"countries"`
@@ -16,16 +14,4 @@ type MasterData struct { // Correct: Uppercase M for export
 type DataItem struct { // Correct: Uppercase D for export
 	Name string `json:"name"`
 	Code string `json:"code"`
-}
-
-type Country struct { // Correct: Uppercase C for export
-	gorm.Model
-	Name string `json:"name"`
-	Code string `json:"code" gorm:"unique"`
-}
-
-type DeviceType struct { // Correct: Uppercase D for export
-	gorm.Model
-	Name string `json:"name"`
-	Code string `json:"code" gorm:"unique"`
 }

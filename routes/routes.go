@@ -6,6 +6,7 @@ import (
 
 	"github.com/Shriharsh07/InventoryManagement/Auth"
 	"github.com/Shriharsh07/InventoryManagement/controller"
+	"github.com/Shriharsh07/InventoryManagement/middleware"
 	"github.com/gorilla/mux"
 )
 
@@ -15,11 +16,16 @@ func RegisterRoutes(r *mux.Router) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}).Methods("GET")
 
+	// Auth Routes
 	r.HandleFunc("/signup", Auth.Signup).Methods("POST", "OPTIONS")
 	r.HandleFunc("/login", Auth.Login).Methods("POST", "OPTIONS")
+	r.Handle("/user/{email}", middleware.JWTAuth(http.HandlerFunc(controller.GetUserByEmail))).Methods("GET", "OPTIONS")
+
+	//Inventory
+	r.Handle("/inventory", middleware.JWTAuth(http.HandlerFunc(controller.AddInventory))).Methods("POST", "OPTIONS")
 
 	// MasterData Route
-	r.HandleFunc("/masterData", controller.GetMasterData).Methods("GET")
+	r.Handle("/masterData", middleware.JWTAuth(http.HandlerFunc(controller.GetMasterData))).Methods("GET")
 }
 
 func SetupRouter() *mux.Router {

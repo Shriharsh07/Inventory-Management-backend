@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -13,7 +14,8 @@ func JWTAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			http.Error(w, "Missing Authorization header", http.StatusUnauthorized)
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]string{"message": "Unauthorized"})
 			return
 		}
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
@@ -21,7 +23,8 @@ func JWTAuth(next http.Handler) http.Handler {
 			return jwtKey, nil
 		})
 		if err != nil || !token.Valid {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]string{"message": "Unauthorized"})
 			return
 		}
 		next.ServeHTTP(w, r)

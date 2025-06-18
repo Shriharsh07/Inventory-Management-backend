@@ -21,3 +21,22 @@ type Inventory struct {
 	Description           string    `json:"description"`
 	UserID                uuid.UUID `json:"userID"`
 }
+
+type StatisticsData struct {
+	AllDevices    int `json:"allDevices"`
+	InStock       int `json:"inStock"`
+	Active        int `json:"active"`
+	OutOfWarranty int `json:"outOfWarranty"`
+}
+
+type DashboardInventoryDetails struct {
+	SerialNumber          string    `json:"serialNumber"`
+	WarrantyTill          time.Time `json:"warrantyTill"`
+	LastPhysicalInventory time.Time `json:"lastSyncDate"`
+	Model                 string    `json:"model"`
+	Status                string    `json:"status"`
+	TypeAssignedTo        string    `json:"typeAssignedTo"`
+	LastLoggedIn          *string   `json:"lastLoggedIn"`   // optional
+	LastAssignedTo        *string   `json:"lastAssignedTo"` // optional
+	Location              string    `json:"location"`
+}

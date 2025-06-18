@@ -33,6 +33,8 @@ func ConnectDB() error {
 		panic("Failed to connect to database")
 	}
 
+	// DB.AutoMigrate(&models.Inventory{})
+
 	// Test connection
 	sqlDB, err := DB.DB()
 	if err != nil {

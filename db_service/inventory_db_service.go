@@ -12,16 +12,12 @@ func CheckInventoryByUserIDAndSerialNumber(userId uuid.UUID, serialNumber string
 	return config.DB.Where("user_id = ? AND serial_number = ?", userId, serialNumber).First(&inventory)
 }
 
-func GetAllInventoryByUserID(userId uuid.UUID) ([]models.Inventory, error) {
-	var inventories []models.Inventory
-
-	// If userId is the zero UUID, return all inventory
-	if userId == uuid.Nil {
-		result := config.DB.Find(&inventories)
-		return inventories, result.Error
-	}
-
+func GetDashboardInventoryByUserID(userId uuid.UUID) ([]models.DashboardInventoryDetails, error) {
+	inventories := []models.DashboardInventoryDetails{}
 	// Otherwise, filter by userId
-	result := config.DB.Where("user_id = ?", userId).Find(&inventories)
+	query := `SELECT inv.serial_number, inv.end_of_warranty, inv.last_physical_inventory, inv.model, inv.status, inv.location
+			FROM inventories inv
+			WHERE inv.user_id = ?;`
+	result := config.DB.Raw(query, userId).Scan(&inventories)
 	return inventories, result.Error
 }

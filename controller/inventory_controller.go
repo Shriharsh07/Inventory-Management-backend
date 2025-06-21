@@ -49,31 +49,41 @@ func GetInventory(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(map[string]string{"message": "Invalid userId"})
 			return
 		}
-	} else {
-		userID = uuid.Nil
 	}
-	inventories, err := dbservice.GetAllInventoryByUserID(userID)
+
+	dashboardInventories, err := dbservice.GetDashboardInventoryByUserID(userID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"message": "Failed to fetch inventory"})
 		return
 	}
 
-	var dashboardList []models.DashboardInventoryDetails
-	for _, inv := range inventories {
-		dashboard := models.DashboardInventoryDetails{
-			SerialNumber:          inv.SerialNumber,
-			WarrantyTill:          inv.EndOfWarranty,
-			LastPhysicalInventory: inv.LastPhysicalInventory,
-			Model:                 inv.Model,
-			Status:                inv.Status,
-			TypeAssignedTo:        inv.DeviceType, // Assuming this maps
-			LastLoggedIn:          nil,            // Set if you have it
-			LastAssignedTo:        nil,            // Set if you have it
-			Location:              inv.Location,
+	inStock := 0
+	allDevices := 0
+	active := 0
+	outOfWarranty := 0
+
+	for _, dashboardInventory := range dashboardInventories {
+		switch dashboardInventory.Status {
+		case "InStock":
+			inStock++
+			allDevices++
+		case "Active":
+			active++
+			allDevices++
+		case "OutOfWarranty":
+			outOfWarranty++
+			allDevices++
 		}
-		dashboardList = append(dashboardList, dashboard)
 	}
+
+	var dashboard models.DashboardResponse
+	dashboard.Inventory = dashboardInventories
+	dashboard.Statistics.AllDevices = allDevices
+	dashboard.Statistics.InStock = inStock
+	dashboard.Statistics.Active = active
+	dashboard.Statistics.OutOfWarranty = outOfWarranty
+
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(dashboardList)
+	json.NewEncoder(w).Encode(dashboard)
 }

@@ -40,3 +40,8 @@ type DashboardInventoryDetails struct {
 	LastAssignedTo        *string   `json:"lastAssignedTo"` // optional
 	Location              string    `json:"location"`
 }
+
+type DashboardResponse struct {
+	Inventory  []DashboardInventoryDetails `json:"inventory"`
+	Statistics StatisticsData              `json:"statistics"`
+}

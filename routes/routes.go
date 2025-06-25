@@ -27,6 +27,9 @@ func RegisterRoutes(r *mux.Router) {
 	r.Handle("/dashboardInventory", middleware.JWTAuth(http.HandlerFunc(controller.GetInventory))).Methods("Get")
 	// MasterData Route
 	r.Handle("/masterData", middleware.JWTAuth(http.HandlerFunc(controller.GetMasterData))).Methods("GET")
+	r.Handle("/addUser", middleware.JWTAuth(http.HandlerFunc(controller.AddUsers))).Methods("POST")
+	r.Handle("/userList/{userId}", middleware.JWTAuth(http.HandlerFunc(controller.GetUserList))).Methods("GET", "OPTIONS")
+
 }
 
 func SetupRouter() *mux.Router {

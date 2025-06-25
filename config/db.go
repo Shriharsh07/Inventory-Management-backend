@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Shriharsh07/InventoryManagement/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,7 @@ func ConnectDB() error {
 		panic("Failed to connect to database")
 	}
 
-	// DB.AutoMigrate(&models.Inventory{})
+	DB.AutoMigrate(&models.UserList{})
 
 	// Test connection
 	sqlDB, err := DB.DB()

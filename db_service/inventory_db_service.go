@@ -21,3 +21,22 @@ func GetDashboardInventoryByUserID(userId uuid.UUID) ([]models.DashboardInventor
 	result := config.DB.Raw(query, userId).Scan(&inventories)
 	return inventories, result.Error
 }
+
+func CheckEmail(email string) (*models.UserList, *gorm.DB) {
+	var user models.UserList
+	result := config.DB.Where("email = ?", email).First(&user)
+	return &user, result
+}
+
+func GetUserData(createrId *uuid.UUID) ([]models.UserList, error) {
+	var users []models.UserList
+	var err error
+
+	if createrId != nil {
+		err = config.DB.Where("creater_id = ?", *createrId).Find(&users).Error
+	} else {
+		err = config.DB.Find(&users).Error
+	}
+
+	return users, err
+}

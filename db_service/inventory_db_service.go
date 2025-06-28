@@ -22,9 +22,9 @@ func GetDashboardInventoryByUserID(userId uuid.UUID) ([]models.DashboardInventor
 	return inventories, result.Error
 }
 
-func CheckEmail(email string) (*models.UserList, *gorm.DB) {
+func CheckEmailAndCreatorID(email string, creatorID uuid.UUID) (*models.UserList, *gorm.DB) {
 	var user models.UserList
-	result := config.DB.Where("email = ?", email).First(&user)
+	result := config.DB.Where("email = ? AND creater_id = ?", email, creatorID).First(&user)
 	return &user, result
 }
 

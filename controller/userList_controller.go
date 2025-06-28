@@ -20,7 +20,7 @@ func AddUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, data := dbservice.CheckEmail(user.Email)
+	_, data := dbservice.CheckEmailAndCreatorID(user.Email, user.CreaterId)
 	if data.RowsAffected > 0 {
 		w.WriteHeader(http.StatusConflict)
 		json.NewEncoder(w).Encode(map[string]string{"message": "Email already exists"})
@@ -52,8 +52,6 @@ func GetUserList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		users, err = dbservice.GetUserData(&createrId)
-	} else {
-		users, err = dbservice.GetUserData(nil)
 	}
 
 	if err != nil {

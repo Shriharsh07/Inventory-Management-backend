@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Shriharsh07/InventoryManagement/models"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() error {
+	godotenv.Load()
 	dsn := os.Getenv("DATABASE_URL")
 
 	var err error

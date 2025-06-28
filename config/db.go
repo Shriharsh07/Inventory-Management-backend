@@ -20,8 +20,6 @@ func ConnectDB() error {
 		log.Fatal("❌ DATABASE_DSN not set in environment")
 	}
 
-	fmt.Println("📡 Connecting using DSN:", dsn)
-
 	DB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("❌ gorm.Open error: %v", err)

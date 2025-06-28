@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/Shriharsh07/InventoryManagement/models"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -17,13 +16,16 @@ func ConnectDB() error {
 	godotenv.Load()
 	dsn := os.Getenv("DATABASE_URL")
 
-	var err error
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Failed to connect to database")
+	if dsn == "" {
+		log.Fatal("❌ DATABASE_DSN not set in environment")
 	}
 
-	DB.AutoMigrate(&models.UserList{})
+	fmt.Println("📡 Connecting using DSN:", dsn)
+
+	DB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("❌ gorm.Open error: %v", err)
+	}
 
 	// Test connection
 	sqlDB, err := DB.DB()

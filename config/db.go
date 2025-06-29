@@ -11,6 +11,7 @@ import (
 )
 
 var DB *gorm.DB
+var err error
 
 func ConnectDB() error {
 	godotenv.Load()
@@ -20,7 +21,7 @@ func ConnectDB() error {
 		log.Fatal("❌ DATABASE_DSN not set in environment")
 	}
 
-	DB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("❌ gorm.Open error: %v", err)
 	}
